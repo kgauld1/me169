@@ -17,7 +17,7 @@ import time
 #
 class Encoder:
     # Initialize.
-    def __init__(self, chLA = 23, chLB = 25, chRA = 24, chRB = 22):
+    def __init__(self, chLA = 22, chLB = 25, chRA = 24, chRB = 23):
         # Initialize the connection to the pigpio daemon.
         self.io = pigpio.pi()
         if not self.io.connected:
@@ -73,7 +73,7 @@ class Encoder:
 
     # Callback Functions:
     def LArise(self, gpio, level, tick):
-        # Update
+        #update
         if (not self.LB):
             self.lcount += 1
         else:
@@ -82,12 +82,32 @@ class Encoder:
         self.LA = True
 
     def LAfall(self, gpio, level, tick):
-
+        #update
+        if (self.LB):
+            self.lcount += 1
+        else:
+            self.lcount -= 1
+        # Save the new state
+        self.LA = False
+        
     def LBrise(self, gpio, level, tick):
-
+        #update
+        if (self.LA):
+            self.lcount += 1
+        else:
+            self.lcount -= 1
+        # Save the new state
+        self.LB = True
+        
     def LBfall(self, gpio, level, tick):
+        #update
+        if (not self.LA):
+            self.lcount += 1
+        else:
+            self.lcount -= 1
+        # Save the new state
+        self.LB = False
 
-    ....
 
               
 #
