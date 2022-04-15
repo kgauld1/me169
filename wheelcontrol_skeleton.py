@@ -92,7 +92,7 @@ def callback_timer(event):
     # Process the encoders, convert to wheel angles
     pleft = (encoder.leftencoder()*2*math.pi / (45*16))
     pright = (encoder.rightencoder()*2*math.pi / (45*16))
-    print([pleft,pright])
+    
     const = .2
     vleft = ((1-const)*vleft) + ((const/dt)*(pleft-lpos))
     vright = ((1-const)*vright) + ((const/dt)*(pright-rpos))
@@ -103,6 +103,7 @@ def callback_timer(event):
     lam2 = .05/.1
     ldesv = lwcomm + lam2*((lint-pleft))
     rdesv = rwcomm + lam2*((rint-pright))
+    print([lam2*((lint-pleft)),lam2*((rint-pright))])
     print([ldesv, rdesv])
     lpwm = ((abs(ldesv)*9) + 30) * math.copysign(1, ldesv)
     rpwm = ((abs(rdesv)*9) + 30) * math.copysign(1, rdesv)
