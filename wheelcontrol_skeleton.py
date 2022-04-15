@@ -101,8 +101,8 @@ def callback_timer(event):
 
     # Generate motor commands (convert wheel speed to PWM)
     lam2 = .05/.01
-    ldesv = lwcomm - lam2*((lint-pleft))
-    rdesv = rwcomm - lam2*((rint-pright))
+    ldesv = lwcomm + lam2*((lint-pleft))
+    rdesv = rwcomm + lam2*((rint-pright))
     print([lint, rint])
     print([pleft,pright])
     print([lam2*((lint-pleft)),lam2*((rint-pright))])
