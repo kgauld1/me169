@@ -22,12 +22,16 @@ import sys
 import time
 import rospy
 
-import encoder
-import driver
+import encoder as encode
+import driver as drive
 
 from sensor_msgs.msg import JointState
 
-
+lpos = 0
+rpos = 0
+lvel = 0
+rvel = 0
+old = 0
 
 #
 #   Command Callback Function
@@ -51,15 +55,19 @@ def callback_command(msg):
 def callback_timer(event):
     # Note the current time to compute dt and populate the ROS messages.
     now = rospy.Time.now()
-
+    global lpos
+    global rpos
+    global lvel
+    global rvel
+    global old
     # Process the commands.
 
     # Process the encoders, convert to wheel angles
     pleft = (encoder.leftencoder() / 45) * (2*math.pi / 16)
     pright = (encoder.rightencoder() / 45) * (2*math.pi / 16)
     const = 0
-    vleft = (const*JointState.leftwheel.velocity) + ((1-const)*(pleft-JointState.leftwheel.position[0])/(now-msg.header.stamp))
-    vright = (const*msg.velocity[1]) + ((1-const)*(pright-msg.position[1])/(now-msg.header.stamp))
+    vleft = (const*lvel) + ((1-const)*(pleft-lpos)/(now-old))
+    vright = (const*rvel) + ((1-const)*(pright-rpos)/(now-old))
     # Add feedback?
     
 
@@ -67,6 +75,12 @@ def callback_timer(event):
     # Send wheel commands.
 
     # Publish the actual wheel state
+    lpos = pleft
+    rpos = pright
+    lvel = vleft
+    rvel = vright
+    old = now
+    
     msg = JointState()
     msg.header.stamp = now
     msg.name         = ['leftwheel', 'rightwheel']
@@ -74,15 +88,16 @@ def callback_timer(event):
     msg.velocity     = [vleft, vright]
     msg.effort       = [0.0, 0.0]
     pubact.publish(msg)
+    
 
     # Publish the desired wheel state
-    msg = JointState()
+    '''msg = JointState()
     msg.header.stamp = rospy.Time.now()
     msg.name         = ['leftwheel', 'rightwheel']
     msg.position     = [FIRST, SECOND]
     msg.velocity     = [FIRST, SECOND]
     msg.effort       = [PWM1, PWM2]
-    pubdes.publish(msg)
+    pubdes.publish(msg)'''
 
 
 #
@@ -93,8 +108,8 @@ if __name__ == "__main__":
     rospy.init_node('wheelcontrol')
 
     # Inititlize the low level.
-    encoder = Encoder(chLA, chLB, chRA, chRB)
-    driver  = Driver(chL, chR, reserveL, reverseR)
+    encoder = encode.Encoder()
+    driver  = drive.Driver()
 
     # Create a publisher to send the wheel desired and actual (state).
     pubdes = rospy.Publisher('/wheel_desired', JointState, queue_size=10)
@@ -104,6 +119,7 @@ if __name__ == "__main__":
     sub = rospy.Subscriber("/wheel_command", JointState, callback_command)
 
     # Create the timer.
+    DT = .02
     duration = rospy.Duration(DT);
     dt       = duration.to_sec()
     timer    = rospy.Timer(duration, callback_timer)
