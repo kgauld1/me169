@@ -68,12 +68,12 @@ if __name__ == "__main__":
     # Try a sinple move.
     print('Test driving forward...');
     driver.left(110)
-    driver.right(-110)
+    driver.right(110)
     time.sleep(1.0)
 
     print('Test spinning right (negative Z)...');
     driver.left(110)
-    driver.right(110)
+    driver.right(-110)
     time.sleep(1.0)
 
     # Cleanup (disabling the motors).
