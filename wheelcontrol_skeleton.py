@@ -109,6 +109,10 @@ def callback_timer(event):
     
     lpwm = ((abs(ldesv)*9) + 30) * math.copysign(1, ldesv)
     rpwm = ((abs(rdesv)*9) + 30) * math.copysign(1, rdesv)
+    if lpwm > 255:
+        lpwm = 255
+    if rpwm > 255:
+        rpwm = 255
     # Send wheel commands.
     driver.left(lpwm)
     driver.right(rpwm)
