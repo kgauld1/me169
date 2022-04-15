@@ -91,7 +91,7 @@ def callback_timer(event):
     msg.name         = ['leftwheel', 'rightwheel']
     msg.position     = [pleft, pright]
     msg.velocity     = [vleft, vright]
-    msg.effort       = [0.0, 0.0]
+    msg.effort       = [100, 100]
     pubact.publish(msg)
     
 
@@ -99,8 +99,8 @@ def callback_timer(event):
     msg = JointState()
     msg.header.stamp = rospy.Time.now()
     msg.name         = ['leftwheel', 'rightwheel']
-    msg.position     = [FIRST, SECOND]
-    msg.velocity     = [FIRST, SECOND]
+    msg.position     = [lwcomm, rwcomm]
+    msg.velocity     = [lwcomm, rwcomm]
     msg.effort       = [100, 100]
     pubdes.publish(msg)
 
