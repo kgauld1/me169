@@ -36,22 +36,24 @@ lcom = 0
 rcom = 0
 lint = 0
 rint = 0
+cmdvel = [0,0]
+cmdtime = 0
 #
 #   Command Callback Function
 #
 #   Save the command and the time received.
 #
 def callback_command(msg):
+    global cmdvel
+    global cmdtime
     # Check the message?
     
     # Note the current time (to timeout the command).
     now = rospy.Time.now()
 
     # Save...
-    cmdvel  = msg.velocity
-    cmdtime1 = rospy.Time.now()
-    cmdtime = cmdtime1.to_sec()
-    return (cmdvel, cmdtime)
+    cmdvel  = msg.velocity()
+    cmdtime = now.to_sec()
 
 
 #
@@ -71,8 +73,12 @@ def callback_timer(event):
     global rcom
     global lint
     global rint
+    global cmdvel
+    global cmdtime
     # Process the commands.
-    (cvel, ctime) = callback_command('/wheel_command')
+    
+    ctime = cmdtime
+    cvel =cmdvel
     lc = lcom
     rc = rcom
     if now-ctime < .25:
