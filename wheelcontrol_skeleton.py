@@ -29,8 +29,8 @@ from sensor_msgs.msg import JointState
 
 lpos = 0
 rpos = 0
-lvel = 0
-rvel = 0
+vleft = 0
+vright= 0
 old = 0
 lcom = 0
 rcom = 0
@@ -67,8 +67,8 @@ def callback_timer(event):
     dt = now-old
     global lpos
     global rpos
-    global lvel
-    global rvel
+    global vleft
+    global vright
     global lcom
     global rcom
     global lint
@@ -94,16 +94,16 @@ def callback_timer(event):
     # Process the encoders, convert to wheel angles
     pleft = (encoder.leftencoder() / 45) * (2*math.pi / 16)
     pright = (encoder.rightencoder() / 45) * (2*math.pi / 16)
-    const = .06
-    vleft = ((1-const)*lvel) + ((const)*(pleft-lpos))
-    vright = ((1-const)*rvel) + ((const)*(pright-rpos))
+    const = .2
+    vleft = ((1-const)*vleft) + ((const)*(pleft-lpos))
+    vright = ((1-const)*vright) + ((const)*(pright-rpos))
     # Add feedback?
     
 
     # Generate motor commands (convert wheel speed to PWM)
     lam2 = .15
-    ldesv = lwcomm + lam2*((lint-pleft)/dt)
-    rdesv = rwcomm + lam2*((rint-pright)/dt)
+    ldesv = lwcomm + lam2*((lint-pleft))
+    rdesv = rwcomm + lam2*((rint-pright))
     lpwm = ((abs(ldesv)*10) + 30) * math.copysign(1, ldesv)
     rpwm = ((abs(rdesv)*10) + 30) * math.copysign(1, rdesv)
     # Send wheel commands.
@@ -113,8 +113,6 @@ def callback_timer(event):
     # Publish the actual wheel state
     lpos = pleft
     rpos = pright
-    lvel = vleft
-    rvel = vright
     old = now
     
 
