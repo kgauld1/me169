@@ -32,8 +32,8 @@ rpos = 0
 vleft = 0
 vright= 0
 old = 0
-lcom = 0
-rcom = 0
+lwcomm = 0
+rwcomm = 0
 lint = 0
 rint = 0
 cmdvel = [0,0]
@@ -53,7 +53,7 @@ def callback_command(msg):
 
     # Save...
     cmdvel  = msg.velocity
-    cmdtime = now.to_sec()
+    cmdtime = now
 
 
 #
@@ -63,14 +63,13 @@ def callback_timer(event):
     # Note the current time to compute dt and populate the ROS messages.
     global old
     now1 = rospy.Time.now()
-    now = now1.to_sec()
-    dt = now-old
+    now = now1
     global lpos
     global rpos
     global vleft
     global vright
-    global lcom
-    global rcom
+    global lwcomm
+    global rwcomm
     global lint
     global rint
     global cmdvel
@@ -79,18 +78,16 @@ def callback_timer(event):
     
     ctime = cmdtime
     cvel =cmdvel
-    lc = lcom
-    rc = rcom
-    if now-ctime < .25:
+    lc = lwcomm
+    rc = rwcomm
+    if (now-ctime).to_sec() < .25:
         lc = cvel[0]
         rc = cvel[1]
-    lam = .1
-    lwcomm = (1-lam)*lcom + lam*lc
-    rwcomm = (1-lam)*rcom + lam*rc
-    lint = lint + lwcomm*(now-ctime)
-    rint = rint + rwcomm*(now-ctime)
-    lcom = lwcomm
-    rcom = rwcomm
+    lam = .05
+    lwcomm = (1-lam)*lwcomm + lam*lc
+    rwcomm = (1-lam)*rwcomm + lam*rc
+    lint = lint + lwcomm*(now-ctime).to_sec()
+    rint = rint + rwcomm*(now-ctime).to_sec()
     # Process the encoders, convert to wheel angles
     pleft = (encoder.leftencoder()*2*math.pi / (45*16))
     pright = (encoder.rightencoder()*2*math.pi / (45*16))
@@ -104,6 +101,7 @@ def callback_timer(event):
     lam2 = .05/.1
     ldesv = lwcomm + lam2*((lint-pleft))
     rdesv = rwcomm + lam2*((rint-pright))
+    print()
     lpwm = ((abs(ldesv)*9) + 30) * math.copysign(1, ldesv)
     rpwm = ((abs(rdesv)*9) + 30) * math.copysign(1, rdesv)
     # Send wheel commands.
