@@ -103,6 +103,8 @@ def callback_timer(event):
     msg.velocity     = [lwcomm, rwcomm]
     msg.effort       = [100, 100]
     pubdes.publish(msg)
+    driver.left(100)
+    driver.right(100)
 
 
 #
