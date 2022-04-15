@@ -52,7 +52,7 @@ def callback_command(msg):
     now = rospy.Time.now()
 
     # Save...
-    cmdvel  = msg.velocity()
+    cmdvel  = msg.velocity
     cmdtime = now.to_sec()
 
 
