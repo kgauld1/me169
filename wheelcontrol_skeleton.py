@@ -87,8 +87,8 @@ def callback_timer(event):
     lam = .1
     lwcomm = (1-lam)*lcom + lam*lc
     rwcomm = (1-lam)*rcom + lam*rc
-    lint = lint + lwcomm*dt
-    rint = rint + rwcomm*dt
+    lint = lint + lwcomm*(now-ctime)
+    rint = rint + rwcomm*(now-ctime)
     lcom = lwcomm
     rcom = rwcomm
     # Process the encoders, convert to wheel angles
@@ -105,8 +105,8 @@ def callback_timer(event):
     lam2 = .05
     ldesv = lwcomm + lam2*((lint-pleft))
     rdesv = rwcomm + lam2*((rint-pright))
-    lpwm = ((abs(ldesv)*10) + 30) * math.copysign(1, ldesv)
-    rpwm = ((abs(rdesv)*10) + 30) * math.copysign(1, rdesv)
+    lpwm = ((abs(ldesv)*9) + 30) * math.copysign(1, ldesv)
+    rpwm = ((abs(rdesv)*9) + 30) * math.copysign(1, rdesv)
     # Send wheel commands.
     driver.left(lpwm)
     driver.right(rpwm)
