@@ -62,7 +62,8 @@ def callback_timer(event):
     global rvel
     global old
     # Process the commands.
-
+    lwcomm = 1
+    rwcomm = 1
     # Process the encoders, convert to wheel angles
     pleft = (encoder.leftencoder() / 45) * (2*math.pi / 16)
     pright = (encoder.rightencoder() / 45) * (2*math.pi / 16)
@@ -74,6 +75,7 @@ def callback_timer(event):
 
     # Generate motor commands (convert wheel speed to PWM)
     # Send wheel commands.
+    
 
     # Publish the actual wheel state
     lpos = pleft
@@ -82,6 +84,8 @@ def callback_timer(event):
     rvel = vright
     old = now
     
+    print([lvel,rvel])
+
     msg = JointState()
     msg.header.stamp = now
     msg.name         = ['leftwheel', 'rightwheel']
@@ -92,12 +96,12 @@ def callback_timer(event):
     
 
     # Publish the desired wheel state
-    '''msg = JointState()
+    msg = JointState()
     msg.header.stamp = rospy.Time.now()
     msg.name         = ['leftwheel', 'rightwheel']
     msg.position     = [FIRST, SECOND]
     msg.velocity     = [FIRST, SECOND]
-    msg.effort       = [PWM1, PWM2]
+    msg.effort       = [100, 100]
     pubdes.publish(msg)'''
 
 
