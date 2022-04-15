@@ -102,7 +102,7 @@ def callback_timer(event):
     msg.position     = [FIRST, SECOND]
     msg.velocity     = [FIRST, SECOND]
     msg.effort       = [100, 100]
-    pubdes.publish(msg)'''
+    pubdes.publish(msg)
 
 
 #
