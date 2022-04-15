@@ -117,7 +117,6 @@ def callback_timer(event):
     rvel = vright
     old = now
     
-    print([lvel,rvel])
 
     msg = JointState()
     msg.header.stamp = now1
