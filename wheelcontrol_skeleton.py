@@ -67,7 +67,7 @@ def callback_timer(event):
     # Process the encoders, convert to wheel angles
     pleft = (encoder.leftencoder() / 45) * (2*math.pi / 16)
     pright = (encoder.rightencoder() / 45) * (2*math.pi / 16)
-    const = .1
+    const = .8
     vleft = (const*lvel) + ((1-const)*(pleft-lpos)/(now-old))
     vright = (const*rvel) + ((1-const)*(pright-rpos)/(now-old))
     # Add feedback?
