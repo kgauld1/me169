@@ -63,7 +63,7 @@ if __name__ == "__main__":
     
 
     # Create the timer.
-    duration = rospy.Duration(0.1)
+    duration = rospy.Duration(0.01)
     dt       = duration.to_sec()
     timer    = rospy.Timer(duration, generator.timercallback)
 
