@@ -84,7 +84,7 @@ def callback_timer(event):
     if now-ctime < .25:
         lc = cvel[0]
         rc = cvel[1]
-    lam = .2
+    lam = .8
     lwcomm = (1-lam)*lcom + lam*lc
     rwcomm = (1-lam)*rcom + lam*rc
     lint = lint + lwcomm*dt
