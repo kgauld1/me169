@@ -87,8 +87,8 @@ def callback_timer(event):
     lam = .1
     lwcomm = (1-lam)*lwcomm + lam*lc
     rwcomm = (1-lam)*rwcomm + lam*rc
-    lint = lint + lwcomm*(now-ctime)
-    rint = rint + rwcomm*(now-ctime)
+    lint = lint + lwcomm*(dt)
+    rint = rint + rwcomm*(dt)
     # Process the encoders, convert to wheel angles
     pleft = (encoder.leftencoder()*2*math.pi / (45*16))
     pright = (encoder.rightencoder()*2*math.pi / (45*16))
