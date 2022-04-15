@@ -37,7 +37,7 @@ rwcomm = 0
 lint = 0
 rint = 0
 cmdvel = [0,0]
-cmdtime = rospy.Time.now()
+
 #
 #   Command Callback Function
 #
