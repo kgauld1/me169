@@ -97,12 +97,11 @@ def callback_timer(event):
     const = .2
     vleft = ((1-const)*vleft) + ((const/.01)*(pleft-lpos))
     vright = ((1-const)*vright) + ((const/.01)*(pright-rpos))
-    print([vleft,vright])
     # Add feedback?
     
 
     # Generate motor commands (convert wheel speed to PWM)
-    lam2 = .05
+    lam2 = .05/.01
     ldesv = lwcomm + lam2*((lint-pleft))
     rdesv = rwcomm + lam2*((rint-pright))
     lpwm = ((abs(ldesv)*9) + 30) * math.copysign(1, ldesv)
