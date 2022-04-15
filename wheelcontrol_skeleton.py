@@ -59,6 +59,7 @@ def callback_command(msg):
 #
 def callback_timer(event):
     # Note the current time to compute dt and populate the ROS messages.
+    global old
     now1 = rospy.Time.now()
     now = now1.to_sec()
     dt = now-old
@@ -66,7 +67,6 @@ def callback_timer(event):
     global rpos
     global lvel
     global rvel
-    global old
     global lcom
     global rcom
     global lint
