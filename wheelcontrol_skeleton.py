@@ -67,7 +67,7 @@ def callback_timer(event):
     # Process the encoders, convert to wheel angles
     pleft = (encoder.leftencoder() / 45) * (2*math.pi / 16)
     pright = (encoder.rightencoder() / 45) * (2*math.pi / 16)
-    const = .8
+    const = .6
     vleft = (const*lvel) + ((1-const)*(pleft-lpos)/(now-old))
     vright = (const*rvel) + ((1-const)*(pright-rpos)/(now-old))
     # Add feedback?
@@ -91,7 +91,7 @@ def callback_timer(event):
     msg.name         = ['leftwheel', 'rightwheel']
     msg.position     = [pleft, pright]
     msg.velocity     = [vleft, vright]
-    msg.effort       = [100, 100]
+    msg.effort       = [50, 50]
     pubact.publish(msg)
     
 
@@ -101,10 +101,11 @@ def callback_timer(event):
     msg.name         = ['leftwheel', 'rightwheel']
     msg.position     = [lwcomm, rwcomm]
     msg.velocity     = [lwcomm, rwcomm]
-    msg.effort       = [100, 100]
+    msg.effort       = [50, 50]
     pubdes.publish(msg)
-    driver.left(100)
-    driver.right(100)
+    sp = 50
+    driver.left(sp)
+    driver.right(50)
 
 
 #
