@@ -97,6 +97,7 @@ def callback_timer(event):
     const = .2
     vleft = ((1-const)*vleft) + ((const)*(pleft-lpos))
     vright = ((1-const)*vright) + ((const)*(pright-rpos))
+    print([vleft,vright])
     # Add feedback?
     
 
