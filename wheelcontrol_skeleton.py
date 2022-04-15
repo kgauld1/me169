@@ -54,7 +54,8 @@ def callback_command(msg):
 #
 def callback_timer(event):
     # Note the current time to compute dt and populate the ROS messages.
-    now = rospy.Time.now()
+    now1 = rospy.Time.now()
+    now = now1.to_sec()
     global lpos
     global rpos
     global lvel
@@ -66,8 +67,8 @@ def callback_timer(event):
     pleft = (encoder.leftencoder() / 45) * (2*math.pi / 16)
     pright = (encoder.rightencoder() / 45) * (2*math.pi / 16)
     const = 0
-    vleft = (const*lvel) + ((1-const)*(pleft-lpos)/(now.to_sec-old.to_sec))
-    vright = (const*rvel) + ((1-const)*(pright-rpos)/(now.to_sec-old.to_sec))
+    vleft = (const*lvel) + ((1-const)*(pleft-lpos)/(now-old))
+    vright = (const*rvel) + ((1-const)*(pright-rpos)/(now-old))
     # Add feedback?
     
 
