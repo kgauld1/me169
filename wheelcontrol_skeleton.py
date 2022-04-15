@@ -32,7 +32,10 @@ rpos = 0
 lvel = 0
 rvel = 0
 old = 0
-
+lcom = 0
+rcom = 0
+lint = 0
+rint = 0
 #
 #   Command Callback Function
 #
@@ -46,7 +49,9 @@ def callback_command(msg):
 
     # Save...
     cmdvel  = [msg.left, msg.right]
-    cmdtime = now
+    cmdtime1 = rospy.Time.now()
+    cmdtime = cmdtime1.to_sec()
+    return (cmdvel, cmdtime)
 
 
 #
@@ -56,26 +61,47 @@ def callback_timer(event):
     # Note the current time to compute dt and populate the ROS messages.
     now1 = rospy.Time.now()
     now = now1.to_sec()
+    dt = now-old
     global lpos
     global rpos
     global lvel
     global rvel
     global old
+    global lcom
+    global rcom
+    global lint
+    global rint
     # Process the commands.
-    lwcomm = 1
-    rwcomm = 1
+    (cvel, ctime) = callback_command('/wheel_command')
+    lc = lcom
+    rc = rcom
+    if now-ctime < .25:
+        lc = cvel[0]
+        rc = cvel[1]
+    lam = .1
+    lwcomm = (1-lam)*lcom + lam*lc
+    rwcomm = (1-lam)*rcom + lam*rc
+    lint = lint + lwcomm*dt
+    rint = rint + rwcomm*dt
+    lcom = lwcomm
+    rcom = rwcomm
     # Process the encoders, convert to wheel angles
     pleft = (encoder.leftencoder() / 45) * (2*math.pi / 16)
     pright = (encoder.rightencoder() / 45) * (2*math.pi / 16)
     const = .6
-    vleft = (const*lvel) + ((1-const)*(pleft-lpos)/(now-old))
-    vright = (const*rvel) + ((1-const)*(pright-rpos)/(now-old))
+    vleft = (const*lvel) + ((1-const)*(pleft-lpos)/(dt))
+    vright = (const*rvel) + ((1-const)*(pright-rpos)/(dt))
     # Add feedback?
     
 
     # Generate motor commands (convert wheel speed to PWM)
+    ldesv = lwcomm + ((lint-pleft)/dt)
+    rdesv = rwcomm + ((rint-pright)/dt)
+    lpwm = ((abs(ldesv)*10) + 30) * (abs(ldesv)/ldesv)
+    rpwm = ((abs(rdesv)*10) + 30) * (abs(rdesv)/rdesv)
     # Send wheel commands.
-    
+    driver.left(lpwm)
+    driver.right(rpwm)
 
     # Publish the actual wheel state
     lpos = pleft
@@ -91,7 +117,7 @@ def callback_timer(event):
     msg.name         = ['leftwheel', 'rightwheel']
     msg.position     = [pleft, pright]
     msg.velocity     = [vleft, vright]
-    msg.effort       = [50, 50]
+    msg.effort       = [lpwm, rpwm]
     pubact.publish(msg)
     
 
@@ -99,13 +125,10 @@ def callback_timer(event):
     msg = JointState()
     msg.header.stamp = rospy.Time.now()
     msg.name         = ['leftwheel', 'rightwheel']
-    msg.position     = [lwcomm, rwcomm]
+    msg.position     = [lint, rint]
     msg.velocity     = [lwcomm, rwcomm]
-    msg.effort       = [50, 50]
+    msg.effort       = [lpwm, rpwm]
     pubdes.publish(msg)
-    sp = 50
-    driver.left(sp)
-    driver.right(50)
 
 
 #
