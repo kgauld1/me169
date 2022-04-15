@@ -84,7 +84,7 @@ def callback_timer(event):
     if now-ctime < .25:
         lc = cvel[0]
         rc = cvel[1]
-    lam = .1
+    lam = .2
     lwcomm = (1-lam)*lcom + lam*lc
     rwcomm = (1-lam)*rcom + lam*rc
     lint = lint + lwcomm*dt
@@ -94,7 +94,7 @@ def callback_timer(event):
     # Process the encoders, convert to wheel angles
     pleft = (encoder.leftencoder() / 45) * (2*math.pi / 16)
     pright = (encoder.rightencoder() / 45) * (2*math.pi / 16)
-    const = .6
+    const = .95
     vleft = (const*lvel) + ((1-const)*(pleft-lpos)/(dt))
     vright = (const*rvel) + ((1-const)*(pright-rpos)/(dt))
     # Add feedback?
