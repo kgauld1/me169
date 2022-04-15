@@ -102,7 +102,7 @@ def callback_timer(event):
     lam2 = .05/.1
     ldesv = lwcomm + lam2*((lint-pleft))
     rdesv = rwcomm + lam2*((rint-pright))
-    print()
+    print([ldesv, rdesv])
     lpwm = ((abs(ldesv)*9) + 30) * math.copysign(1, ldesv)
     rpwm = ((abs(rdesv)*9) + 30) * math.copysign(1, rdesv)
     # Send wheel commands.
