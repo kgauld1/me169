@@ -103,16 +103,14 @@ def callback_timer(event):
     lam2 = .05/.01
     ldesv = lwcomm + lam2*((lint-pleft))
     rdesv = rwcomm + lam2*((rint-pright))
-    print([lint, rint])
-    print([pleft,pright])
-    print([lam2*((lint-pleft)),lam2*((rint-pright))])
+
     
     lpwm = ((abs(ldesv)*9) + 30) * math.copysign(1, ldesv)
     rpwm = ((abs(rdesv)*9) + 30) * math.copysign(1, rdesv)
     if lpwm > 255:
         lpwm = 255
-    if rpwm > 255:
-        rpwm = 255
+    if rpwm > 254:
+        rpwm = 254
     # Send wheel commands.
     driver.left(lpwm)
     driver.right(rpwm)
