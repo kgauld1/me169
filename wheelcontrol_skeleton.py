@@ -94,8 +94,8 @@ def callback_timer(event):
     pright = (encoder.rightencoder()*2*math.pi / (45*16))
     print([pleft,pright])
     const = .2
-    vleft = ((1-const)*vleft) + ((const/.01)*(pleft-lpos))
-    vright = ((1-const)*vright) + ((const/.01)*(pright-rpos))
+    vleft = ((1-const)*vleft) + ((const/dt)*(pleft-lpos))
+    vright = ((1-const)*vright) + ((const/dt)*(pright-rpos))
     # Add feedback?
     
 
