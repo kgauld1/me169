@@ -93,7 +93,7 @@ def callback_timer(event):
     pleft = (encoder.leftencoder()*2*math.pi / (45*16))
     pright = (encoder.rightencoder()*2*math.pi / (45*16))
     
-    const = 1
+    const = .2
     vleft = ((1-const)*vleft) + ((const/dt)*(pleft-lpos))
     vright = ((1-const)*vright) + ((const/dt)*(pright-rpos))
     # Add feedback?
@@ -112,8 +112,8 @@ def callback_timer(event):
     if rpwm > 254:
         rpwm = 254
     # Send wheel commands.
-    #driver.left(lpwm)
-    #driver.right(rpwm)
+    driver.left(40)
+    driver.right(40)
 
     # Publish the actual wheel state
     lpos = pleft
