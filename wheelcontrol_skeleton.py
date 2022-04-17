@@ -105,8 +105,8 @@ def callback_timer(event):
     rdesv = rwcomm# + lam2*((rint-pright))
 
     
-    lpwm = ((abs(ldesv)*9) + 30) * math.copysign(1, ldesv)
-    rpwm = ((abs(rdesv)*9) + 30) * math.copysign(1, rdesv)
+    lpwm = ((abs(ldesv)*9) + 40) * math.copysign(1, ldesv)
+    rpwm = ((abs(rdesv)*9) + 40) * math.copysign(1, rdesv)
     if lpwm > 255:
         lpwm = 255
     if rpwm > 254:
