@@ -112,8 +112,8 @@ def callback_timer(event):
     if rpwm > 254:
         rpwm = 254
     # Send wheel commands.
-    driver.left(lpwm)
-    driver.right(rpwm)
+    #driver.left(lpwm)
+    #driver.right(rpwm)
 
     # Publish the actual wheel state
     lpos = pleft
