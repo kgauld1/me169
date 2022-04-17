@@ -84,7 +84,7 @@ def callback_timer(event):
     if now-ctime < .25:
         lc = cvel[0]
         rc = cvel[1]
-    lam = .1
+    lam = 1
     lwcomm = (1-lam)*lwcomm + lam*lc
     rwcomm = (1-lam)*rwcomm + lam*rc
     lint = lint + lwcomm*(.01)
@@ -101,8 +101,8 @@ def callback_timer(event):
 
     # Generate motor commands (convert wheel speed to PWM)
     lam2 = .05/.01
-    ldesv = lwcomm + lam2*((lint-pleft))
-    rdesv = rwcomm + lam2*((rint-pright))
+    ldesv = lwcomm# + lam2*((lint-pleft))
+    rdesv = rwcomm# + lam2*((rint-pright))
 
     
     lpwm = ((abs(ldesv)*9) + 30) * math.copysign(1, ldesv)
@@ -112,8 +112,8 @@ def callback_timer(event):
     if rpwm > 254:
         rpwm = 254
     # Send wheel commands.
-    driver.left(40)
-    driver.right(40)
+    driver.left(lpwm)
+    driver.right(rpwm)
 
     # Publish the actual wheel state
     lpos = pleft
