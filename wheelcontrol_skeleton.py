@@ -24,6 +24,8 @@ import rospy
 
 import encoder as encode
 import driver as drive
+import gyro as gyr
+import smbus
 
 from sensor_msgs.msg import JointState
 
@@ -150,6 +152,7 @@ if __name__ == "__main__":
     # Inititlize the low level.
     encoder = encode.Encoder()
     driver  = drive.Driver()
+    gyro = gyr.Gyro()
 
     # Create a publisher to send the wheel desired and actual (state).
     pubdes = rospy.Publisher('/wheel_desired', JointState, queue_size=10)
