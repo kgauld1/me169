@@ -23,7 +23,7 @@ import time
 import rospy
 
 import encoder as encode
-import driver as drive
+import driver_replacement as drive
 import gyro as gyr
 import smbus
 
@@ -40,11 +40,16 @@ lint = 0
 rint = 0
 cmdvel = [0,0]
 cmdtime = 0
+head = 0
+whead = 0
 #
 #   Command Callback Function
 #
 #   Save the command and the time received.
 #
+
+
+
 def callback_command(msg):
     global cmdvel
     global cmdtime
@@ -77,6 +82,8 @@ def callback_timer(event):
     global rint
     global cmdvel
     global cmdtime
+    global head
+    global whead
     # Process the commands.
     
     ctime = cmdtime
@@ -94,7 +101,7 @@ def callback_timer(event):
     # Process the encoders, convert to wheel angles
     pleft = (encoder.leftencoder()*2*math.pi / (45*16))
     pright = (encoder.rightencoder()*2*math.pi / (45*16))
-    
+    print([pleft, pright])
     const = .2
     vleft = ((1-const)*vleft) + ((const/dt)*(pleft-lpos))
     vright = ((1-const)*vright) + ((const/dt)*(pright-rpos))
@@ -110,12 +117,20 @@ def callback_timer(event):
     lpwm = ((abs(ldesv)*9) + 40) * math.copysign(1, ldesv)
     rpwm = ((abs(rdesv)*9) + 40) * math.copysign(1, rdesv)
     if lpwm > 255:
-        lpwm = 255
+        lpwm = 254
     if rpwm > 254:
         rpwm = 254
     # Send wheel commands.
     driver.left(lpwm)
     driver.right(rpwm)
+
+    # Read and integrate Gyro
+    (omega, sat) = gyro.read()
+    head = head + (dt*(omega))
+    
+    # Calculate spin from wheels
+    womega = 0.0635*(vright-vleft) / (0.1317625/2)
+    whead = whead + dt*womega
 
     # Publish the actual wheel state
     lpos = pleft
@@ -125,9 +140,9 @@ def callback_timer(event):
 
     msg = JointState()
     msg.header.stamp = now1
-    msg.name         = ['leftwheel', 'rightwheel']
-    msg.position     = [pleft, pright]
-    msg.velocity     = [vleft, vright]
+    msg.name         = ['leftwheel', 'rightwheel', 'rot', 'wrot']
+    msg.position     = [pleft, pright, head, whead]
+    msg.velocity     = [vleft, vright, omega, womega]
     msg.effort       = [lpwm, rpwm]
     pubact.publish(msg)
     
@@ -148,11 +163,11 @@ def callback_timer(event):
 if __name__ == "__main__":
     # Initialize the ROS node.
     rospy.init_node('wheelcontrol')
-
+    i2cbus = smbus.SMBus(1)
     # Inititlize the low level.
     encoder = encode.Encoder()
-    driver  = drive.Driver()
-    gyro = gyr.Gyro()
+    driver  = drive.Driver(i2cbus)
+    gyro = gyr.Gyro(i2cbus)
 
     # Create a publisher to send the wheel desired and actual (state).
     pubdes = rospy.Publisher('/wheel_desired', JointState, queue_size=10)

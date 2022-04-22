@@ -36,7 +36,7 @@ class Driver:
 
 
     # Initialize.
-    def __init__(self, i2cbus, chL = 0, chR = 1, reverseL = 1, reverseR = 1):
+    def __init__(self, i2cbus, chL = 1, chR = 0, reverseL = 0, reverseR = 1):
         # Save the I2C bus object.
         self.i2cbus = i2cbus
 

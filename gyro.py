@@ -125,19 +125,18 @@ class Gyro:
 
         # Convert into a signed 16bit number.
         # GIVEN bytes[0] and bytes[1], create a single 16bit SIGNED integer!
-        if bytes[0][0] == 0:
-            Value = (bytes[0] << 8) | bytes[1]
-        else:
-            Value = ((bytes[0] << 8) | bytes[1]) - 0x10000
+        Value = (bytes[0] << 8) | bytes[1]
+        if (Value & 0x8000):
+            Value -= 0x10000
         # How do you make sure the sign is good?
 
         # Check for saturation.
-        saturated = ((value > 32700) or (value < -32700))
+        saturated = ((Value > 32700) or (Value < -32700))
 
         # Scale into rad/sec.
         # Given the value and the full scale, can you determine:
-        omegaraw = Value*(math.pi*2)/180
-        omegaraw = Value * (scale)/32768
+        
+        omegaraw = Value * (self.scale)/32768
     
         # Return the speed and saturation flag.
         return (omegaraw, saturated)
