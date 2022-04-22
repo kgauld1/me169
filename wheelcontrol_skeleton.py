@@ -129,7 +129,7 @@ def callback_timer(event):
     head = head + (dt*(omega))
     
     # Calculate spin from wheels
-    womega = 0.0635*(vright-vleft) / (0.1317625/2)
+    womega = -0.0635*(vright-vleft) / (0.1317625)
     whead = whead + dt*womega
 
     # Publish the actual wheel state
