@@ -27,9 +27,11 @@ from sensor_msgs.msg   import JointState
 #
 #   Constants
 #
-R = SOMETHING           # Wheel radius
-d = SOMETHING           # Halfwidth between wheels
-
+R = 0.03175           # Wheel radius
+d = 0.1317625/2 
+d = 0.136525/2          # Halfwidth between wheels
+olpst = 0
+orpst = 0
 
 #
 #   Odometry Object
@@ -63,9 +65,9 @@ class OdometryObj:
     def cb_vel_cmd(self, msg):
         # Grab the forward and spin (velocity) commands.
 
-        CONVERT THE BODY VELOCITY COMMANDS TO L/R WHEEL COMMANDS
-        lpsi_dot = SOMETHING
-        rpsi_dot = SOMETHING
+        #CONVERT THE BODY VELOCITY COMMANDS TO L/R WHEEL COMMANDS
+        lpsi_dot = (msg.linear.x-(msg.angular.z*d))/R
+        rpsi_dot = (msg.linear.x+(msg.angular.z*d))/R
 
         # Create the wheel command msg and publish.  Note the incoming
         # message does not have a time stamp, so generate one here.
@@ -78,18 +80,33 @@ class OdometryObj:
 
     # Wheel State Message Callback
     def cb_wheel_state(self, msg):
+        global olpst
+        global orpst
         # Grab the timestamp, wheel and gyro position/velocities.
-
-        lpsi = msg.position[msg.name.index('leftwheel')]
-
-        AND MORE
-
-
-
+        timestamp = msg.header.stamp
+        lpst = msg.position[0]
+        lvst = msg.velocity[0]
+        rpst = msg.position[1]
+        rvst = msg.velocity[1]
+        hest = msg.position[2]
+        omst = msg.velocity[2]
+        whst = msg.position[3]
+        wost = msg.velocity[3]
+        
+        lphi = lpst-olpst
+        rphi = rpst-orpst
+        vx = (R/2) * (lvst + rvst)
+        wz = (R/(2*d))*(rvst-lvst)
+        
+        dp = (R/2)*(lphi+rphi)
+        dth = (R/(2*d))*(rphi-lphi)
+        
+        olpst = lpst
+        orpst = rpst
         # Update the pose.
-        self.x    += dp * ...
-        self.y    += dp * ...
-        self.theta
+        self.x    += dp * math.cos(self.theta + (dth/2))
+        self.y    += dp * math.sin(self.theta + (dth/2))
+        self.theta += dth
 
         # Convert to a ROS Point, Quaternion, Twist (lin&ang veloocity).
         p = Point(self.x, self.y, 0.0)

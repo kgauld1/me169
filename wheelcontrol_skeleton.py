@@ -101,7 +101,6 @@ def callback_timer(event):
     # Process the encoders, convert to wheel angles
     pleft = (encoder.leftencoder()*2*math.pi / (45*16))
     pright = (encoder.rightencoder()*2*math.pi / (45*16))
-    print([pleft, pright])
     const = .2
     vleft = ((1-const)*vleft) + ((const/dt)*(pleft-lpos))
     vright = ((1-const)*vright) + ((const/dt)*(pright-rpos))
@@ -129,7 +128,7 @@ def callback_timer(event):
     head = head + (dt*(omega))
     
     # Calculate spin from wheels
-    womega = -0.0635*(vright-vleft) / (0.1317625)
+    womega = -0.03175*(vright-vleft) / (0.1317625)
     whead = whead + dt*womega
 
     # Publish the actual wheel state
@@ -182,9 +181,10 @@ if __name__ == "__main__":
     dt       = duration.to_sec()
     timer    = rospy.Timer(duration, callback_timer)
 
-
     # Spin while the callbacks are doing all the work.
     rospy.loginfo("Running with dt = %.3f sec..." % dt)
+    time.sleep(2)
+    head = 0
     rospy.spin()
     rospy.loginfo("Stopping...")
 
