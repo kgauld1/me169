@@ -3,10 +3,10 @@
 
   <!-- URDF parameter. -->
   <arg name="urdf"  default="bot.urdf"/>
-  <arg name="model" default="$(find bot_description)/urdf/$(arg urdf)"/>
+  <arg name="model" default="$(find me169git)/urdf/$(arg urdf)"/>
 
   <!-- Rviz configuration file parameter. -->
-  <arg name="cfg"   default="$(find me169_shared)/rviz/odometry.rviz"/>
+  <arg name="cfg"   default="$(find me169git)/rviz/odometry.rviz"/>
 
 
   <!-- Load the URDF file into the robot_description parameter. -->
