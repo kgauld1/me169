@@ -2,7 +2,7 @@
   <!-- Test the odometry node (and lower levels). -->
 
   <!-- URDF parameter. -->
-  <arg name="urdf"  default="bot.urdf"/>
+  <arg name="urdf"  default="bot_front_wheels.urdf"/>
   <arg name="model" default="$(find me169)/me169git/urdf/$(arg urdf)"/>
 
   <!-- Rviz configuration file parameter. -->
