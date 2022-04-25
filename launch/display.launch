@@ -1,25 +1,25 @@
 <launch>
-  <!-- Test the odometry node (and lower levels). -->
-
+  <!-- Simply display the URDF in RVIZ -->
+  
   <!-- URDF parameter. -->
   <arg name="urdf"  default="bot.urdf"/>
-  <arg name="model" default="$(find me169)/me169git/urdf/$(arg urdf)"/>
+  <arg name="model" default="$(find bot_description)/urdf/$(arg urdf)"/>
 
   <!-- Rviz configuration file parameter. -->
-  <arg name="cfg"   default="$(find me169)/me169git/rviz/odometry.rviz"/>
+  <arg name="cfg"   default="$(find bot_description)/rviz/viewurdf.rviz"/>
 
 
   <!-- Load the URDF file into the robot_description parameter. -->
   <param name="robot_description" textfile="$(arg model)"/>
 
-
   <!-- Publish all the robot frames. -->
   <node name="robot_state_publisher"
 	pkg="robot_state_publisher"
-  	type="robot_state_publisher"/>
+  	type="robot_state_publisher">
+    <param name="ignore_timestamp" value="true"/>
+  </node>
 
   <!-- Run the rviz visualization, with the specified config file -->
-  <!-- Kill everything if this stops. -->
   <node pkg="rviz"
   	type="rviz"
 	name="rviz"
