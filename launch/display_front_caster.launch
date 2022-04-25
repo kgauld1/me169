@@ -1,5 +1,5 @@
 <launch>
-  <include file="$(find bot_description)/launch/display.launch">
+  <include file="$(find me169)/me169git/launch/display.launch">
     <arg name="urdf" value="bot_front_caster.urdf"/>
   </include>
 </launch>

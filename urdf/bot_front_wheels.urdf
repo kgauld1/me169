@@ -24,7 +24,7 @@
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
         <mesh
-          filename="package://bot_description/meshes/body_front_wheels.stl" />
+          filename="package://me169/me169git/meshes/body_front_wheels.stl" />
       </geometry>
       <material name="body"/>
     </visual>
@@ -42,7 +42,7 @@
       <origin xyz="0 0 -0.01750" rpy="3.1416 0 0"/>
       <geometry>
         <mesh
-          filename="package://bot_description/meshes/wheel.stl" />
+          filename="package://me169/me169git/meshes/wheel.stl" />
       </geometry>
       <material name="wheel"/>
     </visual>
@@ -60,7 +60,7 @@
       <origin xyz="0 0 -0.01750" rpy="3.1416 0 0"/>
       <geometry>
         <mesh
-          filename="package://bot_description/meshes/wheel.stl" />
+          filename="package://me169/me169git/meshes/wheel.stl" />
       </geometry>
       <material name="wheel"/>
     </visual>

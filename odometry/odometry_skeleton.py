@@ -27,9 +27,9 @@ from sensor_msgs.msg   import JointState
 #
 #   Constants
 #
-R = 0.03175           # Wheel radius
-d = 0.1317625/2 
-d = 0.136525/2          # Halfwidth between wheels
+R = 0.03196           # Wheel radius
+
+d = 0.13/2          # Halfwidth between wheels
 olpst = 0
 orpst = 0
 
@@ -106,7 +106,7 @@ class OdometryObj:
         # Update the pose.
         self.x    += dp * math.cos(self.theta + (dth/2))
         self.y    += dp * math.sin(self.theta + (dth/2))
-        self.theta += dth
+        self.theta = (-hest)
 
         # Convert to a ROS Point, Quaternion, Twist (lin&ang veloocity).
         p = Point(self.x, self.y, 0.0)
