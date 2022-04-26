@@ -106,7 +106,7 @@ class OdometryObj:
         # Update the pose.
         self.x    += dp * math.cos(self.theta + (dth/2))
         self.y    += dp * math.sin(self.theta + (dth/2))
-        self.theta = (-hest)
+        self.theta += dth
 
         # Convert to a ROS Point, Quaternion, Twist (lin&ang veloocity).
         p = Point(self.x, self.y, 0.0)

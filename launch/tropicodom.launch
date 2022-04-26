@@ -1,22 +1,35 @@
 <launch>
   <!-- Test the odometry node (and lower levels). -->
 
+  <node pkg="me169"
+        type="wheelcontrol_skeleton.py"
+        name="wheelcontrol"
+        required="true">
+  </node>
+
+  <node pkg="me169"
+        type="odometry_skeleton.py"
+        name="odometry"
+        required="true">
+  </node>
+
   <!-- URDF parameter. -->
   <arg name="urdf"  default="bot_front_wheels.urdf"/>
   <arg name="model" default="$(find me169)/me169git/urdf/$(arg urdf)"/>
 
   <!-- Rviz configuration file parameter. -->
-  <arg name="cfg"   default="$(find me169)/me169git/rviz/viewurdf.rviz"/>
+  <arg name="cfg"   default="$(find me169)/me169git/rviz/newviz.rviz"/>
 
 
   <!-- Load the URDF file into the robot_description parameter. -->
   <param name="robot_description" textfile="$(arg model)"/>
 
-
+  
   <!-- Publish all the robot frames. -->
   <node name="robot_state_publisher"
 	pkg="robot_state_publisher"
   	type="robot_state_publisher"/>
+  
 
   <!-- Run the rviz visualization, with the specified config file -->
   <!-- Kill everything if this stops. -->
