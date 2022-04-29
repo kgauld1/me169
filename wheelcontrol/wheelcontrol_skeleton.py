@@ -101,14 +101,14 @@ def callback_timer(event):
     # Process the encoders, convert to wheel angles
     pleft = (encoder.leftencoder()*2*math.pi / (45*16))
     pright = (encoder.rightencoder()*2*math.pi / (45*16))
-    const = .2
+    const = .1
     vleft = ((1-const)*vleft) + ((const/dt)*(pleft-lpos))
     vright = ((1-const)*vright) + ((const/dt)*(pright-rpos))
     # Add feedback?
     
 
     # Generate motor commands (convert wheel speed to PWM)
-    lam2 = .03/.01
+    lam2 = .15/.01
     ldesv = lwcomm + lam2*((lint-pleft))
     rdesv = rwcomm + lam2*((rint-pright))
 

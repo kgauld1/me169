@@ -12,6 +12,12 @@
         name="odometry"
         required="true">
   </node>
+  
+  <node pkg="me169"
+        type="simpledriver.py"
+        name="simpledrive"
+        required="true">
+  </node>
 
   <!-- URDF parameter. -->
   <arg name="urdf"  default="bot_front_wheels.urdf"/>
