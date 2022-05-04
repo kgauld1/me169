@@ -91,7 +91,7 @@ class LocalPlanner:
 		elif (self.stage == 1):
 			# bot is far away and faces the goal
 			self.vmsg.linear.x = self.Filter(1.0, 0.5, dist)
-			self.vmsg.angular.z = self.Filter(2.3, 2, del_th_tar)
+			self.vmsg.angular.z = self.Filter(.8, 2, del_th_tar)
 			self.pub_vl_cmd.publish(self.vmsg)
 			if dist < 0.05:
 				self.stage = 2
