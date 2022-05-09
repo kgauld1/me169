@@ -2,12 +2,12 @@
 import sys
 import math
 import rospy
+import numpy as np
 
 from geometry_msgs.msg import Twist
 from nav_msgs.msg      import Odometry
 from geometry_msgs.msg import PoseStamped
-
-
+from sensor_msgs.msg import LaserScan
 
 class LocalPlanner:
 	# Initialize the Local Planner
@@ -17,6 +17,10 @@ class LocalPlanner:
 		self.goal_y = 0
 		self.goal_th = 0
 		self.stage = 0
+		self.stop = 0
+		self.close = 0
+		
+		self.front_dist = 1
 		
 		self.vmsg = Twist()
 		
@@ -25,6 +29,9 @@ class LocalPlanner:
 		
 		# Create a subscriber to listen to the odometry.
 		rospy.Subscriber('/odom', Odometry, self.cb_odom)
+		
+		# Create a subscriber to listen to the LaserScanner
+		rospy.Subscriber('/scan', LaserScan, self.cb_laserscan)
 		
 		# Create a subscriber to listen to the 2D Navigation goal.
 		rospy.Subscriber('/move_base_simple/goal', PoseStamped,
@@ -39,14 +46,21 @@ class LocalPlanner:
 			return max(-cutoff, var * slope)
 		else:
 			return min(cutoff, var * slope)
-		
+			
+	# Run this function when a LaserScanner message is received.
+	def cb_laserscan(self, msg):
+		ranges = msg.ranges
+		mid_idx = int(len(ranges)/2)
+		ranges = ranges[mid_idx-20:mid_idx+20]
+		#ranges = np.array([x if x > 2*msg.range_min else 2*msg.range_min for x in ranges ])
+		self.front_dist =  .7*self.front_dist + (.3)*(.5 if (len(ranges) == 0 or (np.min(ranges) == 0 and self.close == 0)) else np.min(ranges))
 	# Run this function when a 2D Nav goal message is received.					
 	def cb_pose_stamp(self, msg):
 		# Update goal position.
 		self.goal_x = msg.pose.position.x
 		self.goal_y = msg.pose.position.y
 		self.stage = 0
-		
+		self.stop = 0
 		# Update goal theta (conversion from quaternion to Euler needed).
 		qz = msg.pose.orientation.z
 		qw = msg.pose.orientation.w
@@ -81,31 +95,37 @@ class LocalPlanner:
 		del_th = ((self.goal_th - act_th) - math.pi) % (2*math.pi) - math.pi
 		dist = math.sqrt(del_x*del_x + del_y*del_y)
 		
+		print(self.front_dist)
 		# Compute necessary velocity commands
 		if (self.stage == 0):
 			# bot is far away and doesnt face the goal
-			self.vmsg.angular.z = self.Filter(2.3, 2.2, del_th_tar)
-			self.pub_vl_cmd.publish(self.vmsg)
+			self.vmsg.angular.z = self.Filter(.8, 2.2, del_th_tar)
 			if (abs(del_th_tar) < 0.1 and self.vmsg.angular.z < .001):
 			    self.stage = 1
 		elif (self.stage == 1):
 			# bot is far away and faces the goal
-			self.vmsg.linear.x = self.Filter(1.0, 0.5, dist)
+			self.vmsg.linear.x = self.Filter(.8, 0.5, dist)
 			self.vmsg.angular.z = self.Filter(.8, 2, del_th_tar)
-			self.pub_vl_cmd.publish(self.vmsg)
 			if dist < 0.05:
 				self.stage = 2
 		elif (self.stage == 2):
 			# bot is close to goal, but faces the wrong way
 			self.vmsg.angular.z = self.Filter(.8, 2.2, del_th)
-			self.pub_vl_cmd.publish(self.vmsg)
 			if (abs(del_th) < 0.02 and self.vmsg.angular.z < .001):
 			    self.stage = 3
 		else:
 			# bot is close to goal and faces the right way
 			self.vmsg.angular.z = 0
-			self.pub_vl_cmd.publish(self.vmsg)
 			
+		if (self.front_dist < 0.3 or self.stop > 10):
+		    self.vmsg.linear.x = 0
+		    self.close = 1
+		    if self.stop < 100:
+			    self.stop = self.stop + 1
+		else:
+			self.close = 0
+	
+		self.pub_vl_cmd.publish(self.vmsg)
 			
 if __name__ == "__main__":
     # Initialize the ROS node.

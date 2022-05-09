@@ -93,22 +93,22 @@ def callback_timer(event):
     if now-ctime < .25:
         lc = cvel[0]
         rc = cvel[1]
-    lam = .03
+    lam = .02
     lwcomm = (1-lam)*lwcomm + lam*lc
     rwcomm = (1-lam)*rwcomm + lam*rc
-    lint = lint + lwcomm*(.01)
-    rint = rint + rwcomm*(.01)
+    lint = lint + lwcomm*(dt)
+    rint = rint + rwcomm*(dt)
     # Process the encoders, convert to wheel angles
     pleft = (encoder.leftencoder()*2*math.pi / (45*16))
     pright = (encoder.rightencoder()*2*math.pi / (45*16))
-    const = .1
+    const = .2
     vleft = ((1-const)*vleft) + ((const/dt)*(pleft-lpos))
     vright = ((1-const)*vright) + ((const/dt)*(pright-rpos))
     # Add feedback?
     
 
     # Generate motor commands (convert wheel speed to PWM)
-    lam2 = .35/.01
+    lam2 = .2/.01
     ldesv = lwcomm + lam2*((lint-pleft))
     rdesv = rwcomm + lam2*((rint-pright))
 
