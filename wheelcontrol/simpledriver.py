@@ -17,8 +17,8 @@ class LocalPlanner:
 		self.goal_y = 0
 		self.goal_th = 0
 		self.stage = 0
-		self.stop = 0
-		self.close = 0
+		
+		self.last_vel = 0
 		
 		self.front_dist = 1
 		
@@ -51,9 +51,13 @@ class LocalPlanner:
 	def cb_laserscan(self, msg):
 		ranges = msg.ranges
 		mid_idx = int(len(ranges)/2)
-		ranges = ranges[mid_idx-20:mid_idx+20]
-		#ranges = np.array([x if x > 2*msg.range_min else 2*msg.range_min for x in ranges ])
-		self.front_dist =  .7*self.front_dist + (.3)*(.5 if (len(ranges) == 0 or (np.min(ranges) == 0 and self.close == 0)) else np.min(ranges))
+		ranges = ranges[mid_idx-30:mid_idx+30]
+		ranges = [x for x in ranges if x != 0 and x != 5]
+		if len(ranges) != 0:
+			self.front_dist = min(ranges)
+		else:
+			self.front_dist = msg.range_min
+		
 	# Run this function when a 2D Nav goal message is received.					
 	def cb_pose_stamp(self, msg):
 		# Update goal position.
@@ -95,16 +99,23 @@ class LocalPlanner:
 		del_th = ((self.goal_th - act_th) - math.pi) % (2*math.pi) - math.pi
 		dist = math.sqrt(del_x*del_x + del_y*del_y)
 		
-		print(self.front_dist)
 		# Compute necessary velocity commands
-		if (self.stage == 0):
+		if (self.front_dist <= 0.37 and self.stage == 1):
+			temp = 0.9 * self.last_vel
+			self.vmsg.linear.x = temp
+			self.last_vel = temp
+			if temp < 0.01:
+				self.stage = 3
+		elif (self.stage == 0):
 			# bot is far away and doesnt face the goal
 			self.vmsg.angular.z = self.Filter(.8, 2.2, del_th_tar)
 			if (abs(del_th_tar) < 0.1 and self.vmsg.angular.z < .001):
 			    self.stage = 1
 		elif (self.stage == 1):
 			# bot is far away and faces the goal
-			self.vmsg.linear.x = self.Filter(.8, 0.5, dist)
+			temp = self.Filter(0.8, 0.5, dist)
+			self.vmsg.linear.x = temp
+			self.last_vel = temp
 			self.vmsg.angular.z = self.Filter(.8, 2, del_th_tar)
 			if dist < 0.05:
 				self.stage = 2
@@ -116,14 +127,7 @@ class LocalPlanner:
 		else:
 			# bot is close to goal and faces the right way
 			self.vmsg.angular.z = 0
-			
-		if (self.front_dist < 0.3 or self.stop > 10):
-		    self.vmsg.linear.x = 0
-		    self.close = 1
-		    if self.stop < 100:
-			    self.stop = self.stop + 1
-		else:
-			self.close = 0
+			self.last_vel = 0
 	
 		self.pub_vl_cmd.publish(self.vmsg)
 			
