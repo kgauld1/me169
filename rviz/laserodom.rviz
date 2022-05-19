@@ -7,6 +7,7 @@ Panels:
         - /Global Options1
         - /RobotModel1/Links1
         - /LaserScan1
+        - /Map1
       Splitter Ratio: 0.5
     Tree Height: 224
   - Class: rviz/Selection
@@ -160,6 +161,8 @@ Visualization Manager:
           Value: true
         leftwheel:
           Value: true
+        map:
+          Value: true
         odom:
           Value: true
         rightwheel:
@@ -171,22 +174,23 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        odom:
-          base:
-            axle:
-              cameraplate:
-                camera_link:
-                  camera_color_frame:
-                    camera_color_optical_frame:
-                      {}
-                  camera_depth_frame:
-                    camera_depth_optical_frame:
-                      laser:
+        map:
+          odom:
+            base:
+              axle:
+                cameraplate:
+                  camera_link:
+                    camera_color_frame:
+                      camera_color_optical_frame:
                         {}
-              leftwheel:
-                {}
-              rightwheel:
-                {}
+                    camera_depth_frame:
+                      camera_depth_optical_frame:
+                        laser:
+                          {}
+                leftwheel:
+                  {}
+                rightwheel:
+                  {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -219,11 +223,21 @@ Visualization Manager:
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
+    - Alpha: 0.699999988079071
+      Class: rviz/Map
+      Color Scheme: map
+      Draw Behind: false
+      Enabled: true
+      Name: Map
+      Topic: /map
+      Unreliable: false
+      Use Timestamp: false
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: odom
+    Fixed Frame: map
     Frame Rate: 15
   Name: root
   Tools:
@@ -247,7 +261,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 2.4070873260498047
+      Distance: 2.925182342529297
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -263,9 +277,9 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.5697963237762451
+      Pitch: 1.5597965717315674
       Target Frame: <Fixed Frame>
-      Yaw: 1.580399513244629
+      Yaw: 3.1004037857055664
     Saved: ~
 Window Geometry:
   Displays:
@@ -284,4 +298,4 @@ Window Geometry:
     collapsed: false
   Width: 1165
   X: 6
-  Y: 70
+  Y: 6

@@ -14,11 +14,27 @@
   </node>
   
   <node pkg="me169"
-        type="simpledriver.py"
-        name="simpledrive"
-        required="true">
+        type="planner.py"
+        name="planner"
+        required="true"
+        output="screen">
+  </node>
+  
+  <node pkg="me169"
+      type="localize.py"
+      name="localize"
+      required="true"
+      output="screen">
   </node>
 
+  <!-- Map Yaml File. -->
+  <arg name="map" default="$(find me169)/me169git/maps/keck308corner.yaml"/>
+  
+  <!-- Start the map server -->
+  <node name="map_server"
+  pkg ="map_server"
+  type="map_server"
+  args="$(arg map)"/>
 
   <!-- URDF parameter. -->
   <arg name="urdf"  default="bot_front_wheels.urdf"/>
@@ -60,7 +76,7 @@
 	output="screen">
     <param name="min_height"  value="0.030"/>
     <param name="max_height"  value="0.250"/>
-    <param name="correction"  value="0.000056"/>
+    <param name="correction"  value="0.0000"/>
     <param name="horzsamples" value="-1"/>   <!-- -1 = imagewidth/2  = 424 -->
     <param name="vertsamples" value="-1"/>   <!-- -1 = imageheight/2 = 240 -->
     <param name="minimum_contacts" value="5"/>
@@ -72,7 +88,6 @@
 	pkg="robot_state_publisher"
   	type="robot_state_publisher"/>
   
-
   <!-- Run the rviz visualization, with the specified config file -->
   <!-- Kill everything if this stops. -->
   <node pkg="rviz"
